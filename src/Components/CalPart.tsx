@@ -108,7 +108,7 @@ export default function CalPart() {
         {/** +/- 플마 */}
         <button style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-24 bg-slate-800 text-white rounded-full'>+/-</button>
         {/** 0 숫자 */}
-        <button style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-24 bg-slate-800 text-white rounded-full'>0</button>
+        <button onClick={ () => handleNumClicked(0) } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-24 bg-slate-800 text-white rounded-full'>0</button>
         {/** . 소숫점 */}
         <button style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-24 bg-slate-800 text-white rounded-full'>.</button>
         {/** = 등호 */}
