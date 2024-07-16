@@ -25,7 +25,9 @@ interface NumIdxType {
 
 interface ResultType {
     result: number,
-    setResult: (x: ArrayNum[], op: string[]) => void
+    showResult: boolean,
+    setResult: (x: ArrayNum[], op: string[]) => void,
+    setShowResult: (x: boolean) => void
     reset: () => void
 }
 

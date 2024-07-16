@@ -3,7 +3,8 @@ import images from './assets/image'
 import CalPart from './Components/CalPart';
 import { numberStore, operatorStore, numIdxStore } from './store/store';
 import { resultStore } from './store/result';
-import type { ArrayNum } from './store/type/type';
+import { useEffect, useState } from 'react';
+import Print from './Components/assets/Print';
 
 function App() {
   const num = numberStore((state) => state.num);
@@ -15,6 +16,7 @@ function App() {
   const numIdx = numIdxStore((state) => state.numIdx);
   const setNumIdx = numIdxStore((state) => state.setNumIdx);
 
+  let [isBlank, setIsBlank] = useState(false);
   const handleRemoveClicked = () => {
     if(numIdx !== 0 || currentLength[numIdx]) {
       if((currentLength[numIdx] === undefined || currentLength[numIdx] === 0)) {
@@ -25,24 +27,47 @@ function App() {
         }
       } else {
         remove(numIdx);
+        setIsBlank(true);
       }
     }
   }
 
+  useEffect(() => {
+    if(currentLength.length === 0) {
+      resultStore.getState().reset();
+    }
+
+    setIsBlank(false);
+  }, [isBlank]);
+
+
   const result = resultStore((state) => state.result);
+  const showResult = resultStore((state) => state.showResult);
   const setResult = resultStore((state) => state.setResult);
 
-  const handleResult = (): number => {
-    let r = 0;
-    setResult(num, operator);
-    r = result;
-    return r
+  const handleResult = () => {
+    if(numIdx !== 0 && currentLength[numIdx] !== 0) {
+      setResult(num, operator);
+    }
+  }
+
+  useEffect(() => {
+    handleResult();
+  }, [num])
+
+  const CanIShowResult = (): number|string => {
+    if(result !== 0 && currentLength[numIdx] !== 0) {
+      return result;
+    } else {
+      return '';
+    }
   }
 
   const size = '50px';
   return (
     <div>
       <div className='flex items-center justify-center h-screen flex-col'>
+        {/** 테스트 코드 */}
         {/* <div>
           {
             num.map((arr, idx) => {
@@ -53,34 +78,19 @@ function App() {
         <div>
           {currentLength}
         </div> */}
-        <div id='top' className='w-1/4' style={{maxWidth: '400px'}}>
-          <div id='equation-And-result' className='h-48 bg-stone-950 relative flex flex-col items-end justify-center'>
-            <div id='equation'>
-                <span className='text-white'>
-                  {
-                    num.map((arr, idx) => {
-                      const output:  (ArrayNum|string)[] = [];
-                      if(idx !== num.length) {
-                        output.push(arr);
-                        output.push(operator[idx]);
-                      } else {
-                        output.push(arr);
-                      }
-                      return output
-                    }) 
-                  }
-                </span>
+        <div id='top' className='w-1/6' style={{maxWidth: '400px', maxHeight: '240px', minWidth: '180px'}}>
+          <div id='equation-And-result' className='h-36 bg-stone-950 relative flex flex-col items-end justify-center'>
+            <div id='equation' className='px-4'>
+              <Print></Print>
             </div>
-            <div id='result' className=''>
-                <span className='text-gray-500'>
-                  { currentLength[numIdx] === 0 ? '' :
-                    numIdx !== 0 ? handleResult() : '' 
-                  }
+            <div id='result' className='px-4'>
+                <span className={`${showResult ? 'text-green-500 text-xl' : 'text-gray-500 text-lg'}`}>
+                  {CanIShowResult()}
                 </span>
             </div>
           </div>
 
-          <div id='buttons' className='bg-stone-950 relative flex items-center border-b-2 border-gray-500 justify-between'>
+          <div id='buttons' className='bg-stone-950 relative flex items-center border-b-2 border-gray-500 justify-between px-1'>
             <div className='flex'>
               <button> <img src={images.recent} width={size} height={size}></img> </button>
               <button> <img src={images.ruler} width={size} height={size}></img> </button>
@@ -90,11 +100,12 @@ function App() {
           </div>
         </div>
 
-        <div id='down-cal' className='h-auto bg-stone-950 w-1/4' style={{maxWidth: '400px'}}>
+        <div id='down-cal' className='h-auto bg-stone-950 w-1/6' style={{maxWidth: '400px', minWidth: '180px'}}>
           <div id='Cal-part' className=''>
             <CalPart></CalPart>
           </div>
         </div>
+        {/** 테스트 코드 */}
         {/* {
           operator
         }

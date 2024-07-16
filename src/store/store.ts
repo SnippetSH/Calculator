@@ -14,7 +14,10 @@ const numberStore = create<NumberStoreType>((set) => ({
             i === idx ? [...arr, x] : arr
         );
         const newLen = [...state.currentLength];
-        newLen[idx]++;
+        newLen[idx] += 1;
+
+        // console.log('add 1: ',newNum);
+        // console.log('add 2: ', newLen);
         return { 
             num: newNum,
             currentLength: newLen
@@ -32,11 +35,19 @@ const numberStore = create<NumberStoreType>((set) => ({
             }
             return acc;
         }, []);
+
+        // console.log('remove 1:', newNum);
+
         const newLen = [...state.currentLength];
-        newLen[idx]--;
+        newLen[idx] -= 1;
+        // console.log('remove 2: ', newLen);
+
         if(newLen[idx] === 0) {
             newLen.splice(idx, 1);
         }
+
+        // console.log('remove 2 after:', newLen);
+        
         return { 
             num: newNum,
             currentLength: newLen

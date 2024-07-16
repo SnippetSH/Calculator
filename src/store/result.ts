@@ -3,6 +3,7 @@ import type { ArrayNum, ResultType } from "./type/type";
 
 const resultStore = create<ResultType>((set) => ({
     result: 0,
+    showResult: false,
     setResult: (x: ArrayNum[], op: string[]) => set(() => {
         let r: number = 0;
         const convertArr: ArrayNum = [];
@@ -39,7 +40,10 @@ const resultStore = create<ResultType>((set) => ({
             result: r
         }
     }),
-    reset: () => set(() => ({result: 0}))
+    setShowResult: (x: boolean) => set(() => {
+        return {showResult: x};
+    }),
+    reset: () => set(() => ({result: 0, showResult: false}))
 }))
 
 export { resultStore };
