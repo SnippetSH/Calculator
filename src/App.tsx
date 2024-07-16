@@ -80,7 +80,7 @@ function App() {
         </div> */}
         <div id='top' className='w-1/6' style={{maxWidth: '400px', maxHeight: '240px', minWidth: '180px'}}>
           <div id='equation-And-result' className='h-36 bg-stone-950 relative flex flex-col items-end justify-center'>
-            <div id='equation' className='px-4'>
+            <div id='equation' className='px-4 pt-5'>
               <Print></Print>
             </div>
             <div id='result' className='px-4'>
