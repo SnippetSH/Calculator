@@ -2,7 +2,7 @@ import { operatorStore, numberStore, numIdxStore } from "../../stateStore/store"
 import { infixToPostfix, evalPostfix } from "../../shared/api/Calapi";
 import { converter } from "../../shared/api/converter";
 import { resultStore } from "../../stateStore/result";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 export default function Print() {
   const num = numberStore((state) => state.num);
@@ -11,8 +11,6 @@ export default function Print() {
   const setResult = resultStore((state) => state.setResult);
 
   const numIdx = numIdxStore((state) => state.numIdx);
-
-  let [r, setR] = useState(0);
 
   const infix = useMemo(() => {
     const Infix: string[] = [];
@@ -44,7 +42,6 @@ export default function Print() {
     if (infix.length > 1 && currentLength[numIdx] !== 0) {
       const postfix = infixToPostfix(infix);
       const result = evalPostfix(postfix);
-      setR(result);
       setResult(result);  // 상태 업데이트
     }
   }, [infix, currentLength, numIdx, setResult]);
