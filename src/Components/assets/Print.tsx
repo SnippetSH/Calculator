@@ -49,10 +49,6 @@ export default function Print() {
     }
   }, [infix, currentLength, numIdx, setResult]);
 
-  useEffect(() => {
-    console.log(r);
-  }, [r]);
-
   return (
     <div id='Print' className="flex justify-between pb-8">
       {num[0] !== undefined ? p_Element : ''}
