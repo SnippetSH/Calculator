@@ -1,14 +1,12 @@
-import './App.css'
-import images from './assets/image'
-import CalPart from './Components/CalPart';
-import { numberStore, operatorStore, numIdxStore } from './store/store';
-import { resultStore } from './store/result';
+import './App.css';
+import images from './style/assets/image';
+import CalPart from './components/CalPart';
+import { numberStore, operatorStore, numIdxStore } from './stateStore/store';
+import { resultStore } from './stateStore/result';
 import { useEffect, useState } from 'react';
-import Print from './Components/assets/Print';
+import Print from './components/assets/Print';
 
 function App() {
-  const num = numberStore((state) => state.num);
-  const operator = operatorStore((state) => state.operator);
   const removeOperator = operatorStore((state) => state.removeOperator);
   const currentLength = numberStore((state) => state.currentLength);
   const removeCurLen = numberStore((state) => state.removeCurLen);
@@ -43,20 +41,10 @@ function App() {
 
   const result = resultStore((state) => state.result);
   const showResult = resultStore((state) => state.showResult);
-  const setResult = resultStore((state) => state.setResult);
-
-  const handleResult = () => {
-    if(numIdx !== 0 && currentLength[numIdx] !== 0) {
-      setResult(num, operator);
-    }
-  }
-
-  useEffect(() => {
-    handleResult();
-  }, [num])
 
   const CanIShowResult = (): number|string => {
-    if(result !== 0 && currentLength[numIdx] !== 0) {
+    if(showResult) {return result;}
+    if(currentLength[numIdx] !== 0 && currentLength[numIdx] !== undefined && currentLength.length !== 1) {
       return result;
     } else {
       return '';
@@ -78,6 +66,7 @@ function App() {
         <div>
           {currentLength}
         </div> */}
+
         <div id='top' className='w-1/6' style={{maxWidth: '400px', maxHeight: '240px', minWidth: '180px'}}>
           <div id='equation-And-result' className='h-36 bg-stone-950 relative flex flex-col items-end justify-center'>
             <div id='equation' className='px-4 pt-5'>

@@ -1,6 +1,6 @@
 /** number and operator store.ts */
 import { create } from "zustand";
-import type { ArrayNum, NumberStoreType, OperatorType, NumIdxType } from "./type/type";
+import type { ArrayNum, NumberStoreType, OperatorType, NumIdxType } from "../shared/type/type";
 
 const numberStore = create<NumberStoreType>((set) => ({
     num: [],
@@ -9,7 +9,7 @@ const numberStore = create<NumberStoreType>((set) => ({
         num: [...state.num, []],
         currentLength: [...state.currentLength, 0]
     })),
-    addNum: (idx: number, x: number) => set((state) => {
+    addNum: (idx: number, x: number|string) => set((state) => {
         const newNum = state.num.map((arr, i) => 
             i === idx ? [...arr, x] : arr
         );

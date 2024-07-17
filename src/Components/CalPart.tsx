@@ -1,8 +1,8 @@
 import '../App.css';
 import { useEffect, useState, useRef } from 'react';
-import images from '../assets/image';
-import { numberStore, operatorStore, numIdxStore } from '../store/store';
-import { resultStore } from '../store/result';
+import images from '../style/assets/image';
+import { numberStore, operatorStore, numIdxStore } from '../stateStore/store';
+import { resultStore } from '../stateStore/result';
 import Popup from './assets/Popup';
 
 export default function CalPart() {
@@ -47,7 +47,7 @@ export default function CalPart() {
 
   const setShowResult = resultStore((state) => state.setShowResult);
 
-  const handleNumClicked = (x: number) => {
+  const handleNumClicked = (x: number|string) => {
     resultStore.getState().reset();
     setShowResult(false);
     if(currentLength[numIdx] === 1 && num[numIdx][0] === 0) {
@@ -136,6 +136,10 @@ export default function CalPart() {
     setShowResult(true);
   }
 
+  const handleBracketClicked = () => {
+
+  }
+
   const gap = 2;
 
   return(
@@ -145,7 +149,7 @@ export default function CalPart() {
           {/** C초기화*/}
           <button onClick={ () => handleResetClicked(true) } style={{height: `${buttonWidths}px`}} ref={buttonRefs} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-neutral-500 text-red-400 rounded-full'>C</button>
           {/** () 괄호 */}
-          <button style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-neutral-500 rounded-full text-green-600'><img src={`${images.bracket}`} width={'25px'} /></button>
+          <button onClick={ () => handleBracketClicked() } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-neutral-500 rounded-full text-green-600'><img src={`${images.bracket}`} width={'25px'} /></button>
           {/** % 퍼센트  */}
           <button style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-neutral-500 rounded-full text-green-600'><img src={`${images.percent}`} width={'27px'} /></button>
           {/** / 나누기 */}
@@ -187,7 +191,7 @@ export default function CalPart() {
           {/** 0 숫자 */}
           <button onClick={ () => handleNumClicked(0) } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>0</button>
           {/** . 소숫점 */}
-          <button style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>.</button>
+          <button onClick={ () => handleNumClicked(".") } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>.</button>
           {/** = 등호 */}
           <button onClick={ () => handleEqualClicked() } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-green-500 text-white rounded-full'><img src={`${images.equal}`} width={'25px'} /></button>
         </div>

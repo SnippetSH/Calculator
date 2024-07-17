@@ -1,10 +1,10 @@
-type ArrayNum = number[];
+type ArrayNum = (number|string)[];
 
 interface NumberStoreType {
     num: ArrayNum[]
-    currentLength: ArrayNum
+    currentLength: number[]
     addMore: () => void
-    addNum: (idx: number, x: number) => void
+    addNum: (idx: number, x: number|string) => void
     remove: (idx: number) => void
     removeCurLen: () => void
     reset: () => void
@@ -26,7 +26,7 @@ interface NumIdxType {
 interface ResultType {
     result: number,
     showResult: boolean,
-    setResult: (x: ArrayNum[], op: string[]) => void,
+    setResult: (x: number) => void,
     setShowResult: (x: boolean) => void
     reset: () => void
 }
