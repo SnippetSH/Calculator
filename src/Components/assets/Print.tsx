@@ -1,54 +1,43 @@
-import { operatorStore, numberStore, numIdxStore } from "../../stateStore/store";
-import { infixToPostfix, evalPostfix } from "../../shared/api/Calapi";
-import { converter } from "../../shared/api/converter";
-import { resultStore } from "../../stateStore/result";
-import { useEffect, useMemo } from "react";
+import { equationStore } from "../../shared/stateStore/store";
+import { useMemo } from "react";
 
 export default function Print() {
-  const num = numberStore((state) => state.num);
-  const currentLength = numberStore((state) => state.currentLength);
-  const operator = operatorStore((state) => state.operator);
-  const setResult = resultStore((state) => state.setResult);
+  /** num에 대한 idx와 operator에 대한 idx를 따로 관리 (infix, p_Element 모두 동일)
+   * 현재 (코드) -> backup.ts 파일 참조
+   * 열거나 닫는 괄호를 만나기 전까지는 현재 방식 그대로 가되, 만일 괄호를 만나게 되면 괄호는 바로 push 
+   */
 
-  const numIdx = numIdxStore((state) => state.numIdx);
+  const curEqu = equationStore((state) => state.cur);
 
-  const infix = useMemo(() => {
-    const Infix: string[] = [];
-    num.forEach((arr, idx) => {
-      if (num.length > 1 && operator.length > 0 && currentLength[numIdx] !== 0) {
-        Infix.push(converter(arr).toString());
-        if (operator[idx] !== undefined) {
-          Infix.push(operator[idx]);
-        }
+  const showRender = useMemo(() => {
+    const HTML_P: JSX.Element[] = [];
+    
+    curEqu.map((context, idx) => {
+      if(!isNaN(Number(context))) { //현재 식의 마지막이 숫자일 경우
+        HTML_P.push(<p key={`number_${idx}`} className="text-white text-3xl">{context}</p>)
       } else {
-        Infix.push(converter(arr).toString());
+        let t: string;
+        switch(context) {
+          case "*":
+            t = '×';
+            break;
+          case "/":
+            t = "÷";
+            break;
+          default:
+            t = context;
+            break;
+        }
+        HTML_P.push(<p key={`operator_${idx}`} className="text-green-500 text-3xl">{t}</p>);
       }
-    });
-    return Infix;
-  }, [num, operator, currentLength, numIdx]);
-
-  const p_Element = useMemo(() => {
-    return num.map((arr, idx) => {
-      return (
-        <div key={`element_${idx}`} className="flex">
-          <p key={`number_${idx}`} className="text-white text-xl">{arr}</p>
-          {operator[idx] && <p key={`operator_${idx}`} className="text-green-500 text-xl">{operator[idx]}</p>}
-        </div>
-      );
-    });
-  }, [num, operator]);
-
-  useEffect(() => {
-    if (infix.length > 1 && currentLength[numIdx] !== 0) {
-      const postfix = infixToPostfix(infix);
-      const result = evalPostfix(postfix);
-      setResult(result);  // 상태 업데이트
-    }
-  }, [infix, currentLength, numIdx, setResult]);
+    })
+    
+    return HTML_P;
+  }, [curEqu]);
 
   return (
     <div id='Print' className="flex justify-between pb-8">
-      {num[0] !== undefined ? p_Element : ''}
+      {showRender}
     </div>
   );
 }

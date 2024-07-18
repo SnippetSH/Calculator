@@ -31,4 +31,12 @@ interface ResultType {
     reset: () => void
 }
 
-export type { ArrayNum, NumberStoreType, OperatorType, NumIdxType, ResultType };
+interface EquationStore {
+    cur: string[],
+    prev: string[],
+    push: (x: string) => void,
+    pop: (x: number) => void,
+    reset: () => void
+}
+
+export type { ArrayNum, NumberStoreType, OperatorType, NumIdxType, ResultType, EquationStore };

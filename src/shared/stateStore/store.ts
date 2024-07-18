@@ -1,6 +1,6 @@
 /** number and operator store.ts */
 import { create } from "zustand";
-import type { ArrayNum, NumberStoreType, OperatorType, NumIdxType } from "../shared/type/type";
+import type { ArrayNum, NumberStoreType, OperatorType, NumIdxType, EquationStore } from "../type/type";
 
 const numberStore = create<NumberStoreType>((set) => ({
     num: [],
@@ -104,4 +104,37 @@ const numIdxStore = create<NumIdxType>((set) => ({
     }))
 }))
 
-export { numberStore, operatorStore, numIdxStore };
+const equationStore = create<EquationStore>((set) => ({
+    cur: [],
+    prev: [],
+    push: (x: string) => set((state) => {
+        const tmpPrev = [...state.cur];
+        return {
+            cur: [...state.cur, x],
+            prev: tmpPrev
+        }
+    }),
+    pop: (x: number) => set((state) => {
+        const tmpPrev = [...state.cur];
+        let tmpCur = [...state.cur];
+
+        for(let i = 0; i < x; i++) {
+            if(tmpCur.length > 0) {
+                tmpCur = tmpCur.slice(0, -1);
+            } else {
+                break;
+            }
+        }
+
+        return {
+            cur: tmpCur,
+            prev: tmpPrev
+        }
+    }),
+    reset: () => set(() => ({
+        cur: [],
+        prev: []
+    }))
+}))
+
+export { numberStore, operatorStore, numIdxStore, equationStore };

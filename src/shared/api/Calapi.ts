@@ -52,6 +52,11 @@ const infixToPostfix = (exp: StringArr): StringArr => {
     return result;
 }
 
+const roundToPrecision = (value: number, precision: number): number => {
+    const factor = Math.pow(10, precision);
+    return Math.round(value * factor) / factor;
+}
+
 
 const evalPostfix = (exp: StringArr): number => {
     let op1: number, op2: number, i: number = 0;
@@ -85,7 +90,9 @@ const evalPostfix = (exp: StringArr): number => {
         }
     }
 
-    return s.pop();
+    let result = s.pop();
+
+    return roundToPrecision(result, 14);
 }
 
 export { infixToPostfix, evalPostfix };

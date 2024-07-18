@@ -1,37 +1,41 @@
 import './App.css';
-import images from './style/assets/image';
+import images from './style/image';
 import CalPart from './components/CalPart';
-import { numberStore, operatorStore, numIdxStore } from './stateStore/store';
-import { resultStore } from './stateStore/result';
-import { useEffect, useState } from 'react';
 import Print from './components/assets/Print';
+import { equationStore } from './shared/stateStore/store';
+import { resultStore } from './shared/stateStore/result';
+import { bracketStore } from './shared/stateStore/bracket';
+import { evalPostfix, infixToPostfix } from './shared/api/Calapi';
+import { useEffect, useState } from 'react';
 
 function App() {
-  const removeOperator = operatorStore((state) => state.removeOperator);
-  const currentLength = numberStore((state) => state.currentLength);
-  const removeCurLen = numberStore((state) => state.removeCurLen);
-  const remove = numberStore((state) => state.remove);
-  const numIdx = numIdxStore((state) => state.numIdx);
-  const setNumIdx = numIdxStore((state) => state.setNumIdx);
-
+  const curEqu = equationStore((state) => state.cur);
+  const popEqu = equationStore((state) => state.pop);
+  const pushEqu = equationStore((state) => state.push);
+  const setBracket = bracketStore((state) => state.setBracket);
+  const bracketNum = bracketStore((state) => state.bracketNum);
   let [isBlank, setIsBlank] = useState(false);
+
   const handleRemoveClicked = () => {
-    if(numIdx !== 0 || currentLength[numIdx]) {
-      if((currentLength[numIdx] === undefined || currentLength[numIdx] === 0)) {
-        setNumIdx(false);
-        removeOperator();
-        if(currentLength[numIdx] === 0) {
-          removeCurLen();
-        }
-      } else {
-        remove(numIdx);
-        setIsBlank(true);
-      }
+    if(curEqu[curEqu.length-1] === "(") {
+      setBracket(false);
     }
+    if(curEqu[curEqu.length-1] === ")") {
+      setBracket(true);
+    }
+    if(!isNaN(Number(curEqu[curEqu.length-1]))) {
+      let tmp = curEqu[curEqu.length - 1]
+      popEqu(1);
+      tmp = tmp.slice(0, -1);
+      pushEqu(tmp);
+      return;
+    }
+    popEqu(1);
+    setIsBlank(true);
   }
 
   useEffect(() => {
-    if(currentLength.length === 0) {
+    if(curEqu.length === 0) {
       resultStore.getState().reset();
     }
 
@@ -40,40 +44,62 @@ function App() {
 
 
   const result = resultStore((state) => state.result);
+  const setResult = resultStore((state) => state.setResult);
   const showResult = resultStore((state) => state.showResult);
 
+  const [infix, setInfix] = useState<string[]>([]);
   const CanIShowResult = (): number|string => {
     if(showResult) {return result;}
-    if(currentLength[numIdx] !== 0 && currentLength[numIdx] !== undefined && currentLength.length !== 1) {
-      return result;
-    } else {
-      return '';
-    }
+    if(infix.includes("+") || infix.includes("-") || infix.includes("*") || infix.includes("/")) {
+      if(bracketNum === 0) {
+        if((!isNaN(Number(curEqu[curEqu.length - 1])) || curEqu[curEqu.length - 1] === ")") && curEqu.length > 1) {
+          return result;
+        } else {
+          return '';
+        }
+      } else {
+        return '';
+      }
+    } else { return '';}
   }
+
+  useEffect(() => {
+    if (bracketNum === 0) {
+      const tmp: string[] = [];
+      curEqu.forEach((context) => {
+        if (!isNaN(Number(context))) {
+          tmp.push(Number(context).toString());
+        } else {
+          tmp.push(context);
+        }
+      });
+      setInfix(tmp);
+    }
+  }, [curEqu, bracketNum]);
+
+  useEffect(() => {
+    if(infix.includes("+") || infix.includes("-") || infix.includes("*") || infix.includes("/")) {
+      if (infix.length > 2 && (infix[infix.length - 1] === ")" || !isNaN(Number(infix[infix.length - 1])))) {
+        const postfix = infixToPostfix(infix);
+        const result = evalPostfix(postfix);
+        setResult(result);
+      }
+    }
+  }, [infix, curEqu]);
 
   const size = '50px';
   return (
     <div>
       <div className='flex items-center justify-center h-screen flex-col'>
         {/** 테스트 코드 */}
-        {/* <div>
-          {
-            num.map((arr, idx) => {
-              return <div key={idx}> { arr } </div>
-            })
-          }
-        </div>
-        <div>
-          {currentLength}
-        </div> */}
-
+        
         <div id='top' className='w-1/6' style={{maxWidth: '400px', maxHeight: '240px', minWidth: '180px'}}>
           <div id='equation-And-result' className='h-36 bg-stone-950 relative flex flex-col items-end justify-center'>
-            <div id='equation' className='px-4 pt-5'>
+            <div id='equation' className='px-4 pt-8 h-1/2'>
               <Print></Print>
             </div>
-            <div id='result' className='px-4'>
-                <span className={`${showResult ? 'text-green-500 text-xl' : 'text-gray-500 text-lg'}`}>
+            <div id='result' className='px-4 pt-4 h-1/2'>
+                <span className={`${showResult ? 'text-green-500 text-3xl' : 'text-gray-500 text-lg'}`}>
                   {CanIShowResult()}
                 </span>
             </div>
@@ -95,12 +121,7 @@ function App() {
           </div>
         </div>
         {/** 테스트 코드 */}
-        {/* {
-          operator
-        }
-        {
-          numIdx
-        } */}
+        
       </div>
     </div>
   )

@@ -1,8 +1,9 @@
 import '../App.css';
 import { useEffect, useState, useRef } from 'react';
-import images from '../style/assets/image';
-import { numberStore, operatorStore, numIdxStore } from '../stateStore/store';
-import { resultStore } from '../stateStore/result';
+import images from '../style/image';
+import { equationStore } from '../shared/stateStore/store';
+import { resultStore } from '../shared/stateStore/result';
+import { bracketStore } from '../shared/stateStore/bracket';
 import Popup from './assets/Popup';
 
 export default function CalPart() {
@@ -35,78 +36,59 @@ export default function CalPart() {
     }
   }, [])
 
-  const num = numberStore((state) => state.num);
-  const addMore = numberStore((state) => state.addMore);
-  const addNum = numberStore((state) => state.addNum);
-  const remove = numberStore((state) => state.remove);
-  const addOperator = operatorStore((state) => state.addOperator);
-  const removeOperator = operatorStore((state) => state.removeOperator);
-  const currentLength = numberStore((state) => state.currentLength);
-  const numIdx = numIdxStore((state) => state.numIdx);
-  const setNumIdx = numIdxStore((state) => state.setNumIdx);
-
   const setShowResult = resultStore((state) => state.setShowResult);
+  const showResult = resultStore((state) => state.showResult);
+  const result = resultStore((state) => state.result);
 
-  const handleNumClicked = (x: number|string) => {
-    resultStore.getState().reset();
-    setShowResult(false);
-    if(currentLength[numIdx] === 1 && num[numIdx][0] === 0) {
-      remove(numIdx);
-      addMore();
-      addNum(numIdx, x);
-      return;
+  /** 현재 식 */
+  const curEqu = equationStore((state) => state.cur);
+  /** 현재 식에 push */
+  const pushEqu = equationStore((state) => state.push);
+  /** 현재 식에서 parameter만큼 pop */
+  const popEqu = equationStore((state) => state.pop);
+  /** 현재 식에 일단 숫자 넣고, 얼마나 들어왔는지 저장. 연산자 들어올 때까지 대기 */
+  const handleNumClicked = (x: string) => {
+    /** 닫는 괄호로 현재 식이 마무리 된 경우
+     * handleMoreClicked("*") 호출 후, 숫자 push
+     */
+    if(curEqu[curEqu.length-1] === ")") {
+      pushEqu("*");
     }
-
-    if(currentLength[numIdx] === undefined) {
-      addMore();
-      addNum(numIdx, x);
-    } else {
-      addNum(numIdx, x);
+    if(showResult) {
+      setShowResult(false);
     }
+    let tmp = x
+    if(!isNaN(Number(curEqu[curEqu.length - 1]))) {
+      tmp = curEqu[curEqu.length - 1];
+      popEqu(1);
+      tmp += x;
+    }
+    pushEqu(tmp);
   }
+
+
 
   let [popup, setPopup] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const [tmpOP, setTmpOP] = useState('');
 
   const handleMoreClicked = (operator: string) => {
-    if(resultStore.getState().showResult === true) {
-      addMore();
-      addNum(numIdx, resultStore.getState().result);
-      setShowResult(false);
-      setTmpOP(operator);
-    } else {
-      if(currentLength[0] !== undefined) {
-        if(currentLength[numIdx] === 0) {
-          removeOperator();
-          addOperator(operator);
-        } else {
-          addMore();
-          addOperator(operator);
-          setNumIdx(true);
-        }
-      } else {
+    if(showResult) {
+      pushEqu(result.toString());
+      setShowResult(false);  
+      pushEqu(operator);
+      return;
+    }
+    if(curEqu[curEqu.length - 1] !== ")") {
+      if(isNaN(Number(curEqu[curEqu.length - 1]))) {
         setPopup(true);
         setShowPopup(true);
-      }
-    }
-  }
-
-  useEffect(() => {
-    if(currentLength[0] !== undefined) {
-      if(currentLength[numIdx] === 0) {
-        removeOperator();
-        addOperator(tmpOP);
       } else {
-        addMore();
-        addOperator(tmpOP);
-        setNumIdx(true);
+        pushEqu(operator);
       }
     } else {
-      setPopup(true);
-      setShowPopup(true);
+      pushEqu(operator);
     }
-  }, [tmpOP])
+  }
 
   useEffect(() => {
     let timer: number;
@@ -123,9 +105,8 @@ export default function CalPart() {
   }, [popup, showPopup]);
 
   const handleResetClicked = (x: boolean) => {
-    numberStore.getState().reset();
-    numIdxStore.getState().reset();
-    operatorStore.getState().reset();
+    equationStore.getState().reset();
+    bracketStore.getState().reset();
     if(x) {
       resultStore.getState().reset();
     }
@@ -136,8 +117,57 @@ export default function CalPart() {
     setShowResult(true);
   }
 
-  const handleBracketClicked = () => {
+  const setBracket = bracketStore((state) => state.setBracket);
+  const bracketNum = bracketStore((state) => state.bracketNum);
+  const handleBracketClicked = (x: string) => {
+    /** 여는 괄호 '(' 누를 수 있는 경우:
+     * 연산자로 현재 식이 끝났을 경우 ( currentLength[numIdx] === 0 ), => 그냥 여는 괄호를 추가
+     * 숫자(.)로 끝났을 경우 ( currentLength[numIdx] !== 0) => 앞에 * 연산자를 추가한 후 괄호를 추가
+     * 여는 괄호로 끝났을 경우(연산자와 같은 경우로 생각) => 그냥 여는 괄호 추가
+     * 닫는 괄호로 끝났을 경우 => * 연산자 추가 후 여는 괄호 추가
+     */
 
+    if(x === "(") {
+      if(curEqu.length === 0) {
+        pushEqu(x);
+      } else {
+        if(!isNaN(Number(curEqu[curEqu.length-1]))) { //현재 식의 마지막이 숫자일 경우
+          pushEqu("*");
+          pushEqu(x);
+        } else if(curEqu[curEqu.length-1] === ")") {
+          pushEqu("*");
+          pushEqu(x);
+        } else {
+          pushEqu(x);
+        }
+      }
+      setBracket(true);
+    }
+
+    /** 닫는 괄호 ')' 누를 수 있는 경우:
+     * 숫자(.)로 끝났을 경우 ( currentLength[numIdx] !== 0) => 그냥 닫는 괄호 추가
+     * 연산자 혹은 여는 괄호로 식이 끝났을 경우엔 안 됨.
+     * 닫는 괄호로 끝났을 경우 => 그냥 닫는 괄호 추가
+     */
+
+    else if(x === ")" && bracketNum > 0) {
+      if(!isNaN(Number(curEqu[curEqu.length-1]))) { //현재 식의 마지막이 숫자일 경우
+        pushEqu(x);
+        setBracket(false)
+      } else if(curEqu[curEqu.length-1] === ")") {
+        pushEqu(x);
+        setBracket(false);
+      } else {
+        console.log("안됑");
+      }
+    }
+ 
+    /**
+     * 여는 괄호가 클릭되면, bracket state 1 증가
+     * 닫는 괄호가 클릭되면, bracket state 1 감소
+     * 
+     * bracket state는 Zustand로 관리해서 Print 컴포넌트에서도 사용 가능하도록 설정
+     */
   }
 
   const gap = 2;
@@ -148,40 +178,40 @@ export default function CalPart() {
         <div id='first-col' className={`grid grid-cols-4 gap-${gap}`}> 
           {/** C초기화*/}
           <button onClick={ () => handleResetClicked(true) } style={{height: `${buttonWidths}px`}} ref={buttonRefs} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-neutral-500 text-red-400 rounded-full'>C</button>
-          {/** () 괄호 */}
-          <button onClick={ () => handleBracketClicked() } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-neutral-500 rounded-full text-green-600'><img src={`${images.bracket}`} width={'25px'} /></button>
-          {/** % 퍼센트  */}
-          <button style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-neutral-500 rounded-full text-green-600'><img src={`${images.percent}`} width={'27px'} /></button>
+          {/** ( 괄호 */}
+          <button onClick={ () => handleBracketClicked("(") } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-neutral-500 rounded-full text-green-600'><img src={`${images.Lbracket}`} width={'25px'} /></button>
+          {/** ) 괄호  */}
+          <button onClick={ () => handleBracketClicked(")") } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-neutral-500 rounded-full text-green-600'><img src={`${images.Rbracket}`} width={'27px'} /></button>
           {/** / 나누기 */}
           <button onClick={ () => handleMoreClicked('/') } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-neutral-500 rounded-full text-green-600'><img src={`${images.divide}`} width={'28px'} /></button>
         </div>
         <div id='second-col' className={`grid grid-cols-4 gap-${gap}`}> 
           {/** 7 숫자 */}
-          <button onClick={ () => handleNumClicked(7) } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>7</button>
+          <button onClick={ () => handleNumClicked('7') } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>7</button>
           {/** 8 숫자 */}
-          <button onClick={ () => handleNumClicked(8) } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>8</button>
+          <button onClick={ () => handleNumClicked('8') } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>8</button>
           {/** 9 숫자 */}
-          <button onClick={ () => handleNumClicked(9) } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>9</button>
+          <button onClick={ () => handleNumClicked('9') } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>9</button>
           {/** * 곱하기 */}
           <button onClick={ () => handleMoreClicked('*') } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-neutral-500 rounded-full text-green-600'><img src={`${images.multiple}`} width={'20px'} /></button>
         </div>
         <div id='third-col' className={`grid grid-cols-4 gap-${gap}`}> 
           {/** 4 숫자 */}
-          <button onClick={ () => handleNumClicked(4) } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>4</button>
+          <button onClick={ () => handleNumClicked('4') } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>4</button>
           {/** 5 숫자 */}
-          <button onClick={ () => handleNumClicked(5) } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>5</button>
+          <button onClick={ () => handleNumClicked('5') } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>5</button>
           {/** 6 숫자 */}
-          <button onClick={ () => handleNumClicked(6) } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>6</button>
+          <button onClick={ () => handleNumClicked('6') } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>6</button>
           {/** - 빼기 */}
           <button onClick={ () => handleMoreClicked('-') } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-neutral-500 rounded-full text-green-600'><img src={`${images.minus}`} width={'25px'} /></button>
         </div>
         <div id='forth-col' className={`grid grid-cols-4 gap-${gap}`}> 
           {/** 1 숫자 */}
-          <button onClick={ () => handleNumClicked(1) } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>1</button>
+          <button onClick={ () => handleNumClicked('1') } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>1</button>
           {/** 2 숫자 */}
-          <button onClick={ () => handleNumClicked(2) } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>2</button>
+          <button onClick={ () => handleNumClicked('2') } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>2</button>
           {/** 3 숫자 */}
-          <button onClick={ () => handleNumClicked(3) } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>3</button>
+          <button onClick={ () => handleNumClicked('3') } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>3</button>
           {/** + 더하기 */}
           <button onClick={ () => handleMoreClicked('+') } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-neutral-500 rounded-full text-green-600'><img src={`${images.plus}`} width={'25px'} /></button>
         </div>
@@ -189,7 +219,7 @@ export default function CalPart() {
           {/** +/- 플마 */}
           <button style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-2xl max-w-20 bg-slate-800 text-white rounded-full'>+/-</button>
           {/** 0 숫자 */}
-          <button onClick={ () => handleNumClicked(0) } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>0</button>
+          <button onClick={ () => handleNumClicked('0') } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>0</button>
           {/** . 소숫점 */}
           <button onClick={ () => handleNumClicked(".") } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>.</button>
           {/** = 등호 */}
