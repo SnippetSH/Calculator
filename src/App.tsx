@@ -6,9 +6,17 @@ import { equationStore } from './shared/stateStore/store';
 import { resultStore } from './shared/stateStore/result';
 import { bracketStore } from './shared/stateStore/bracket';
 import { evalPostfix, infixToPostfix } from './shared/api/Calapi';
+import { InitStorage } from './shared/api/localDBapi';
 import { useEffect, useState } from 'react';
 
 function App() {
+  //App 컴포넌트가 마운트 될 때 로컬 스토리지 확인
+  useEffect(() => {
+    if(!localStorage.getItem('history')) {
+      InitStorage();
+    }
+  }, [])
+
   const curEqu = equationStore((state) => state.cur);
   const popEqu = equationStore((state) => state.pop);
   const pushEqu = equationStore((state) => state.push);

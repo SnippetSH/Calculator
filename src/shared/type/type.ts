@@ -14,4 +14,9 @@ interface EquationStore {
     reset: () => void
 }
 
-export type { ResultType, EquationStore };
+type HistoryStorage = {
+    equation: string[],
+    result?: number
+}
+
+export type { ResultType, EquationStore, HistoryStorage };

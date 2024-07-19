@@ -4,6 +4,7 @@ import images from '../style/image';
 import { equationStore } from '../shared/stateStore/store';
 import { resultStore } from '../shared/stateStore/result';
 import { bracketStore } from '../shared/stateStore/bracket';
+import { saveData } from '../shared/api/localDBapi';
 import Popup from './assets/Popup';
 
 export default function CalPart() {
@@ -58,6 +59,13 @@ export default function CalPart() {
     }
     if(showResult) {
       setShowResult(false);
+    }
+
+    if(x === "0" && curEqu[curEqu.length - 1] === "/") {
+      setMsg("잘못된 입력입니다.")
+      setShowPopup(true);
+      setPopup(true);
+      return;
     }
     
     let tmp = x
@@ -126,6 +134,7 @@ export default function CalPart() {
   }
 
   const handleEqualClicked = () => {
+    saveData([...curEqu], result);
     handleResetClicked(false);
     setShowResult(true);
   }
@@ -194,7 +203,12 @@ export default function CalPart() {
   }
 
   const handlePlusMinusClicked = () => {
-    if(!isNaN(Number(curEqu[curEqu.length - 1]))) {
+    if (Number(curEqu[curEqu.length - 1]) <= 0 && curEqu[curEqu.length - 2] === "(") {
+      let tmp = -Number(curEqu[curEqu.length - 1]);
+      popEqu(2);
+      setBracket(false);
+      pushEqu(tmp.toString());
+    } else if(!isNaN(Number(curEqu[curEqu.length - 1]))) {
       let tmp = -curEqu[curEqu.length - 1];
       popEqu(1);
       pushEqu("(");
