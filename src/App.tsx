@@ -49,11 +49,11 @@ function App() {
 
   const [infix, setInfix] = useState<string[]>([]);
   const CanIShowResult = (): number|string => {
-    if(showResult) {return result;}
+    if(showResult) {return result.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");}
     if(infix.includes("+") || infix.includes("-") || infix.includes("*") || infix.includes("/")) {
       if(bracketNum === 0) {
         if((!isNaN(Number(curEqu[curEqu.length - 1])) || curEqu[curEqu.length - 1] === ")") && curEqu.length > 1) {
-          return result;
+          return result.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
         } else {
           return '';
         }
@@ -77,29 +77,32 @@ function App() {
     }
   }, [curEqu, bracketNum]);
 
+  const [resultLen, setResultLen] = useState(0);
   useEffect(() => {
+    console.log(infix);
     if(infix.includes("+") || infix.includes("-") || infix.includes("*") || infix.includes("/")) {
       if (infix.length > 2 && (infix[infix.length - 1] === ")" || !isNaN(Number(infix[infix.length - 1])))) {
         const postfix = infixToPostfix(infix);
         const result = evalPostfix(postfix);
         setResult(result);
+        setResultLen(result.toString().length);
       }
     }
   }, [infix, curEqu]);
 
   const size = '50px';
   return (
-    <div>
+    <div className='bg-white'>
       <div className='flex items-center justify-center h-screen flex-col'>
         {/** 테스트 코드 */}
         
         <div id='top' className='w-1/6' style={{maxWidth: '400px', maxHeight: '240px', minWidth: '180px'}}>
-          <div id='equation-And-result' className='h-36 bg-stone-950 relative flex flex-col items-end justify-center'>
-            <div id='equation' className='px-4 pt-8 h-1/2'>
+          <div id='equation-And-result' className='h-36 bg-stone-950 relative flex flex-col items-end justify-center overflow-hidden'>
+            <div id='equation' className='px-4 pt-8 h-1/2 overflow-y-hidden'>
               <Print></Print>
             </div>
             <div id='result' className='px-4 pt-4 h-1/2'>
-                <span className={`${showResult ? 'text-green-500 text-3xl' : 'text-gray-500 text-lg'}`}>
+                <span className={`${showResult ? resultLen > 15 ? 'text-green-500 text-2xl' : 'text-green-500 text-3xl' : 'text-gray-500 text-lg'}`}>
                   {CanIShowResult()}
                 </span>
             </div>
@@ -116,9 +119,9 @@ function App() {
         </div>
 
         <div id='down-cal' className='h-auto bg-stone-950 w-1/6' style={{maxWidth: '400px', minWidth: '180px'}}>
-          <div id='Cal-part' className=''>
-            <CalPart></CalPart>
-          </div>
+          
+          <CalPart></CalPart>
+          
         </div>
         {/** 테스트 코드 */}
         

@@ -40,6 +40,8 @@ export default function CalPart() {
   const showResult = resultStore((state) => state.showResult);
   const result = resultStore((state) => state.result);
 
+  const [msg, setMsg] = useState("");
+
   /** 현재 식 */
   const curEqu = equationStore((state) => state.cur);
   /** 현재 식에 push */
@@ -57,16 +59,26 @@ export default function CalPart() {
     if(showResult) {
       setShowResult(false);
     }
+    
     let tmp = x
-    if(!isNaN(Number(curEqu[curEqu.length - 1]))) {
+    if(curEqu[curEqu.length - 1] === "-0") {
+      popEqu(1);
+      tmp = (-Number(x)).toString();
+    } else if(Number(curEqu[curEqu.length - 1]) === 0) {
+      popEqu(1);
+    } else if(!isNaN(Number(curEqu[curEqu.length - 1])) || curEqu[curEqu.length - 1] === ".") {
+      if(curEqu[curEqu.length - 1].length === 15) {
+        setMsg("15자리까지 입력할 수 있어요.")
+        setShowPopup(true);
+        setPopup(true);
+        return;
+      }
       tmp = curEqu[curEqu.length - 1];
       popEqu(1);
       tmp += x;
     }
     pushEqu(tmp);
   }
-
-
 
   let [popup, setPopup] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
@@ -80,6 +92,7 @@ export default function CalPart() {
     }
     if(curEqu[curEqu.length - 1] !== ")") {
       if(isNaN(Number(curEqu[curEqu.length - 1]))) {
+        setMsg("완성되지 않은 수식입니다.");
         setPopup(true);
         setShowPopup(true);
       } else {
@@ -95,7 +108,7 @@ export default function CalPart() {
     if (popup) {
       timer = setTimeout(() => {
         setPopup(false);
-      }, 2000);
+      }, 1000);
     } else if (showPopup) {
       timer = setTimeout(() => {
         setShowPopup(false);
@@ -126,6 +139,10 @@ export default function CalPart() {
      * 여는 괄호로 끝났을 경우(연산자와 같은 경우로 생각) => 그냥 여는 괄호 추가
      * 닫는 괄호로 끝났을 경우 => * 연산자 추가 후 여는 괄호 추가
      */
+
+    if(showResult) {
+      setShowResult(false);  
+    }
 
     if(x === "(") {
       if(curEqu.length === 0) {
@@ -158,8 +175,14 @@ export default function CalPart() {
         pushEqu(x);
         setBracket(false);
       } else {
-        console.log("안됑");
+        setMsg("완성되지 않은 수식입니다.");
+        setPopup(true);
+        setShowPopup(true);
       }
+    } else {
+      setMsg("완성되지 않은 수식입니다.");
+      setPopup(true);
+      setShowPopup(true);
     }
  
     /**
@@ -168,6 +191,24 @@ export default function CalPart() {
      * 
      * bracket state는 Zustand로 관리해서 Print 컴포넌트에서도 사용 가능하도록 설정
      */
+  }
+
+  const handlePlusMinusClicked = () => {
+    if(!isNaN(Number(curEqu[curEqu.length - 1]))) {
+      let tmp = -curEqu[curEqu.length - 1];
+      popEqu(1);
+      pushEqu("(");
+      setBracket(true);
+      pushEqu(tmp.toString());
+    } else if(curEqu.length === 0) {
+      pushEqu("(");
+      setBracket(true);
+      pushEqu("-0");
+    } else if(isNaN(Number(curEqu[curEqu.length - 1]))) {
+      pushEqu("(");
+      setBracket(true);
+      pushEqu("-0");
+    }
   }
 
   const gap = 2;
@@ -217,7 +258,7 @@ export default function CalPart() {
         </div>
         <div id='fifth-col' className={`grid grid-cols-4 gap-${gap}`}> 
           {/** +/- 플마 */}
-          <button style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-2xl max-w-20 bg-slate-800 text-white rounded-full'>+/-</button>
+          <button onClick={ () => handlePlusMinusClicked() } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-2xl max-w-20 bg-slate-800 text-white rounded-full'>+/-</button>
           {/** 0 숫자 */}
           <button onClick={ () => handleNumClicked('0') } style={{height: `${buttonWidths}px`}} className='font-bold flex justify-center items-center text-3xl max-w-20 bg-slate-800 text-white rounded-full'>0</button>
           {/** . 소숫점 */}
@@ -228,7 +269,7 @@ export default function CalPart() {
       </div>
       
       <div id='popup' className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 transition-opacity duration-300 ${popup ? 'opacity-100' : 'opacity-0'}`}>
-        {showPopup ? <Popup msg={'완성되지 않은 수식입니다.'} parentWidths={parentWidths}></Popup> : ''}
+        {showPopup ? <Popup msg={msg} parentWidths={parentWidths}></Popup> : ''}
         {/* {<Popup msg={'완성되지 않은 수식입니다.'} parentWidths={parentWidths}></Popup>} */}
       </div>
     </div>
