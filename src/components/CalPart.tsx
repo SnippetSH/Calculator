@@ -1,4 +1,4 @@
-import '../App.css';
+import '../index.css';
 import { useEffect, useState, useRef } from 'react';
 import images from '../style/image';
 import { equationStore } from '../shared/stateStore/store';
