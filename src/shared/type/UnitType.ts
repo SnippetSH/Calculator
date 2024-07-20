@@ -9,8 +9,6 @@ interface UpDownCompType {
     Content: BothIn[]
 };
 
-const Unit: UpDownCompType[] = [];
-
 class 면적 implements UpDownCompType {
     id: string;
     Content: BothIn[];
@@ -151,12 +149,26 @@ class 시간 implements UpDownCompType {
     }
 }
 
-const Tip = {
-    id: "팁",
-    Top: "소계",
-    Down: "전체"
+interface Tip {
+    id: string,
+    Top: string,
+    Down: string
 }
 
+class tipClass implements Tip {
+    id: string;
+    Top: string;
+    Down: string;
+    constructor() {
+        this.id = "팁";
+        this.Top = "소계";
+        this.Down = "전체";
+    }
+}
+
+const tip = new tipClass()
+
+const Unit: UpDownCompType[] = [];
 Unit.push(new 면적());
 Unit.push(new 길이());
 Unit.push(new 온도());
@@ -166,4 +178,21 @@ Unit.push(new 데이터());
 Unit.push(new 속도());
 Unit.push(new 시간());
 
-export { Unit, type UpDownCompType, Tip };
+const isUpDownCompType = (obj: any): obj is UpDownCompType => {
+    return (
+      obj &&
+      typeof obj.id === 'string' &&
+      Array.isArray(obj.Content)
+    );
+  };
+  
+  const isTip = (obj: any): obj is Tip => {
+    return (
+      obj &&
+      typeof obj.id === 'string' &&
+      typeof obj.Top === 'string' &&
+      typeof obj.Down === 'string'
+    );
+  };
+
+export { Unit, type UpDownCompType, tip, type Tip, isUpDownCompType, isTip};
