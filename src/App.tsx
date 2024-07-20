@@ -17,7 +17,7 @@ function App() {
 
   return (
     <div className='bg-white'>
-      <BrowserRouter>
+      <BrowserRouter basename='/Calculator'>
         <Routes>
           <Route path="/Calculator" element={<Main/>} />
           <Route path="/Calculator/measure" element={<MeasureMain/>} />
