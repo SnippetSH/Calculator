@@ -11,6 +11,7 @@ interface EquationStore {
     prev: string[],
     push: (x: string) => void,
     pop: (x: number) => void,
+    setEqu: (x: string[]) => void,
     reset: () => void
 }
 

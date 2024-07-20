@@ -1,6 +1,6 @@
 import calculate from './assets/calculate.png';
 import more from './assets/more.png';
-import recent from './assets/recent.png';
+import history from './assets/recent.png';
 import ruler from './assets/ruler.png';
 import remove from './assets/remove.png';
 import equal from './assets/equals.png';
@@ -17,7 +17,7 @@ const images = {
     Lbracket,
     calculate,
     more,
-    recent,
+    history,
     ruler,
     remove,
     equal,

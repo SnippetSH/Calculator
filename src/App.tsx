@@ -1,4 +1,4 @@
-import './App.css';
+import './index.css';
 import images from './style/image';
 import CalPart from './components/CalPart';
 import Print from './components/assets/Print';
@@ -8,6 +8,7 @@ import { bracketStore } from './shared/stateStore/bracket';
 import { evalPostfix, infixToPostfix } from './shared/api/Calapi';
 import { InitStorage } from './shared/api/localDBapi';
 import { useEffect, useState } from 'react';
+import HistoryPart from './components/HistoryPart';
 
 function App() {
   //App 컴포넌트가 마운트 될 때 로컬 스토리지 확인
@@ -31,13 +32,16 @@ function App() {
     if(curEqu[curEqu.length-1] === ")") {
       setBracket(true);
     }
+
     if(!isNaN(Number(curEqu[curEqu.length-1]))) {
       let tmp = curEqu[curEqu.length - 1]
       popEqu(1);
       tmp = tmp.slice(0, -1);
+      if(tmp.length === 0) { return; }
       pushEqu(tmp);
       return;
     }
+
     popEqu(1);
     setIsBlank(true);
   }
@@ -56,6 +60,7 @@ function App() {
   const showResult = resultStore((state) => state.showResult);
 
   const [infix, setInfix] = useState<string[]>([]);
+
   const CanIShowResult = (): number|string => {
     if(showResult) {return result.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");}
     if(infix.includes("+") || infix.includes("-") || infix.includes("*") || infix.includes("/")) {
@@ -98,13 +103,15 @@ function App() {
     }
   }, [infix, curEqu]);
 
+  const [showHistory, setShowHistory] = useState(false);
+
   const size = '50px';
   return (
     <div className='bg-white'>
       <div className='flex items-center justify-center h-screen flex-col'>
         {/** 테스트 코드 */}
         
-        <div id='top' className='w-1/6' style={{maxWidth: '400px', maxHeight: '240px', minWidth: '180px'}}>
+        <div id='top' className='w-1/6' style={{maxWidth: '400px', maxHeight: '430px', minWidth: '300px'}}>
           <div id='equation-And-result' className='h-36 bg-stone-950 relative flex flex-col items-end justify-center overflow-hidden'>
             <div id='equation' className='px-4 pt-8 h-1/2 overflow-y-hidden'>
               <Print></Print>
@@ -118,7 +125,7 @@ function App() {
 
           <div id='buttons' className='bg-stone-950 relative flex items-center border-b-2 border-gray-500 justify-between px-1'>
             <div className='flex'>
-              <button> <img src={images.recent} width={size} height={size}></img> </button>
+              <button onClick={() => setShowHistory(!showHistory) }> <img src={images.history} width={size} height={size}></img> </button>
               <button> <img src={images.ruler} width={size} height={size}></img> </button>
               <button> <img src={images.more} width={size} height={size}></img> </button>
             </div>
@@ -126,8 +133,9 @@ function App() {
           </div>
         </div>
 
-        <div id='down-cal' className='h-auto bg-stone-950 w-1/6' style={{maxWidth: '400px', minWidth: '180px'}}>
+        <div id='down-cal' className='relative h-auto bg-stone-950 w-1/6' style={{maxWidth: '400px', minWidth: '300px'}}>
           
+          {showHistory && <HistoryPart setShow={setShowHistory}></HistoryPart>}
           <CalPart></CalPart>
           
         </div>

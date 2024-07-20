@@ -6,6 +6,7 @@ import { resultStore } from '../shared/stateStore/result';
 import { bracketStore } from '../shared/stateStore/bracket';
 import { saveData } from '../shared/api/localDBapi';
 import Popup from './assets/Popup';
+import { handleNumClickedfunc } from '../shared/api/handleNumClicked';
 
 export default function CalPart() {
   const buttonRefs = useRef<HTMLButtonElement>(null);
@@ -54,38 +55,40 @@ export default function CalPart() {
     /** 닫는 괄호로 현재 식이 마무리 된 경우
      * handleMoreClicked("*") 호출 후, 숫자 push
      */
-    if(curEqu[curEqu.length-1] === ")") {
-      pushEqu("*");
-    }
-    if(showResult) {
-      setShowResult(false);
-    }
 
-    if(x === "0" && curEqu[curEqu.length - 1] === "/") {
-      setMsg("잘못된 입력입니다.")
-      setShowPopup(true);
-      setPopup(true);
-      return;
-    }
+    handleNumClickedfunc(x, curEqu, pushEqu, popEqu, showResult, setShowResult, setMsg, setShowPopup, setPopup);
+    // if(curEqu[curEqu.length-1] === ")") {
+    //   pushEqu("*");
+    // }
+    // if(showResult) {
+    //   setShowResult(false);
+    // }
+
+    // if(x === "0" && curEqu[curEqu.length - 1] === "/") {
+    //   setMsg("잘못된 입력입니다.")
+    //   setShowPopup(true);
+    //   setPopup(true);
+    //   return;
+    // }
     
-    let tmp = x
-    if(curEqu[curEqu.length - 1] === "-0") {
-      popEqu(1);
-      tmp = (-Number(x)).toString();
-    } else if(Number(curEqu[curEqu.length - 1]) === 0) {
-      popEqu(1);
-    } else if(!isNaN(Number(curEqu[curEqu.length - 1])) || curEqu[curEqu.length - 1] === ".") {
-      if(curEqu[curEqu.length - 1].length === 15) {
-        setMsg("15자리까지 입력할 수 있어요.")
-        setShowPopup(true);
-        setPopup(true);
-        return;
-      }
-      tmp = curEqu[curEqu.length - 1];
-      popEqu(1);
-      tmp += x;
-    }
-    pushEqu(tmp);
+    // let tmp = x
+    // if(curEqu[curEqu.length - 1] === "-0") {
+    //   popEqu(1);
+    //   tmp = (-Number(x)).toString();
+    // } else if(Number(curEqu[curEqu.length - 1]) === 0) {
+    //   popEqu(1);
+    // } else if(!isNaN(Number(curEqu[curEqu.length - 1])) || curEqu[curEqu.length - 1] === ".") {
+    //   if(curEqu[curEqu.length - 1].length === 15) {
+    //     setMsg("15자리까지 입력할 수 있어요.")
+    //     setShowPopup(true);
+    //     setPopup(true);
+    //     return;
+    //   }
+    //   tmp = curEqu[curEqu.length - 1];
+    //   popEqu(1);
+    //   tmp += x;
+    // }
+    // pushEqu(tmp);
   }
 
   let [popup, setPopup] = useState(false);
@@ -98,6 +101,7 @@ export default function CalPart() {
       pushEqu(operator);
       return;
     }
+
     if(curEqu[curEqu.length - 1] !== ")") {
       if(isNaN(Number(curEqu[curEqu.length - 1]))) {
         setMsg("완성되지 않은 수식입니다.");
@@ -283,7 +287,7 @@ export default function CalPart() {
       </div>
       
       <div id='popup' className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 transition-opacity duration-300 ${popup ? 'opacity-100' : 'opacity-0'}`}>
-        {showPopup ? <Popup msg={msg} parentWidths={parentWidths}></Popup> : ''}
+        {showPopup ? <Popup msg={msg} parentWidths={parentWidths} isBright={false}></Popup> : ''}
         {/* {<Popup msg={'완성되지 않은 수식입니다.'} parentWidths={parentWidths}></Popup>} */}
       </div>
     </div>

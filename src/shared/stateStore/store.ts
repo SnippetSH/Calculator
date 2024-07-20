@@ -29,6 +29,7 @@ const equationStore = create<EquationStore>((set) => ({
             prev: tmpPrev
         }
     }),
+    setEqu: (x: string[]) => set(() => ({cur: x})),
     reset: () => set(() => ({
         cur: [],
         prev: []

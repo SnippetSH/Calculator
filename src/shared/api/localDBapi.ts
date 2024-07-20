@@ -36,15 +36,16 @@ const saveData = (equ: string[], res: number) => {
     localStorage.setItem('history', JSON.stringify(Data));
 }
 
-
-const loadData = (idx: number): HistoryStorage => {
+const loadAllData = (): HistoryStorage[] => {
     const tmpData = localStorage.getItem('history');
     const Data: HistoryStorage[] = JSON.parse(typeof tmpData === 'string' ? tmpData : "{}");
-    if(idx < Data.length) {
-        return Data[idx];
-    } else {
-        return {equation: ["null"]}
-    }
+    return Data;
 }
 
-export { InitStorage, saveData, loadData };
+const loadOneData = (idx: number): HistoryStorage => {
+    const tmpData = localStorage.getItem('history');
+    const Data: HistoryStorage[] = JSON.parse(typeof tmpData === 'string' ? tmpData : "{}");
+    return Data[idx];
+}
+
+export { InitStorage, saveData, loadAllData, loadOneData };
