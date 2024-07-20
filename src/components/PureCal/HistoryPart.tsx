@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { InitStorage, loadAllData, loadOneData } from "../shared/api/localDBapi";
-import { HistoryStorage } from "../shared/type/type";
-import { equationStore } from "../shared/stateStore/store";
-import { resultStore } from "../shared/stateStore/result";
-import Popup from "./assets/Popup";
-import { handleNumClickedfunc } from "../shared/api/handleNumClicked";
+import { InitStorage, loadAllData, loadOneData } from "../../shared/api/localDBapi";
+import { HistoryStorage } from "../../shared/type/type";
+import { equationStore } from "../../shared/stateStore/store";
+import { resultStore } from "../../shared/stateStore/result";
+import Popup from "../assets/Popup";
+import { handleNumClickedfunc } from "../../shared/api/handleNumClicked";
 
 export default function HistoryPart({ setShow } : {setShow: React.Dispatch<React.SetStateAction<boolean>>}) {
     const [Data, setData] = useState<HistoryStorage[]>();

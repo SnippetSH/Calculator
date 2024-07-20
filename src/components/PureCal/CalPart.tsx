@@ -1,12 +1,11 @@
-import '../index.css';
 import { useEffect, useState, useRef } from 'react';
-import images from '../style/image';
-import { equationStore } from '../shared/stateStore/store';
-import { resultStore } from '../shared/stateStore/result';
-import { bracketStore } from '../shared/stateStore/bracket';
-import { saveData } from '../shared/api/localDBapi';
-import Popup from './assets/Popup';
-import { handleNumClickedfunc } from '../shared/api/handleNumClicked';
+import images from '../../style/image';
+import { equationStore } from '../../shared/stateStore/store';
+import { resultStore } from '../../shared/stateStore/result';
+import { bracketStore } from '../../shared/stateStore/bracket';
+import { saveData } from '../../shared/api/localDBapi';
+import Popup from '../assets/Popup';
+import { handleNumClickedfunc } from '../../shared/api/handleNumClicked';
 
 export default function CalPart() {
   const buttonRefs = useRef<HTMLButtonElement>(null);

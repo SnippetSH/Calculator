@@ -11,6 +11,8 @@ import divide from './assets/divide.png';
 import percent from './assets/percent.png';
 import Rbracket from './assets/Rbracket.png';
 import Lbracket from './assets/Lbracket.png';
+import LessThan from './assets/LessThan.png';
+import DownTri from './assets/DownTri.png';
 
 const images = {
     Rbracket,
@@ -25,7 +27,9 @@ const images = {
     minus,
     multiple,
     divide,
-    percent
+    percent,
+    LessThan,
+    DownTri
 }
 
 export default images;

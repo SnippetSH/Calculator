@@ -12,6 +12,13 @@ export function handleNumClickedfunc(x: string, curEqu: string[], pushEqu: (y: s
         setPopup&& setPopup(true);
         return;
       }
+
+      if(x === "." && curEqu[curEqu.length - 1] === ".") {
+        setMsg && setMsg("잘못된 입력입니다.");
+        setShowPopup && setShowPopup(true)
+        setPopup&& setPopup(true);
+        return;
+      }
       
       let tmp = x
       if(curEqu[curEqu.length - 1] === "-0") {
@@ -21,9 +28,9 @@ export function handleNumClickedfunc(x: string, curEqu: string[], pushEqu: (y: s
         popEqu(1);
       } else if(!isNaN(Number(curEqu[curEqu.length - 1])) || curEqu[curEqu.length - 1] === ".") {
         if(curEqu[curEqu.length - 1].length === 15) {
-        setMsg && setMsg("15자리까지 입력할 수 있어요.");
-        setShowPopup && setShowPopup(true)
-        setPopup&& setPopup(true);
+          setMsg && setMsg("15자리까지 입력할 수 있어요.");
+          setShowPopup && setShowPopup(true)
+          setPopup&& setPopup(true);
           return;
         }
         tmp = curEqu[curEqu.length - 1];
