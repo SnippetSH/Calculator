@@ -14,7 +14,6 @@ function App() {
     }
   }, [])
 
-
   return (
     <div className='bg-white'>
       <BrowserRouter basename='/Calculator'>

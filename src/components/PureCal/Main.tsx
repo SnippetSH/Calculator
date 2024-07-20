@@ -1,7 +1,8 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { equationStore } from "../../shared/stateStore/store";
 import { resultStore } from "../../shared/stateStore/result";
 import { bracketStore } from "../../shared/stateStore/bracket";
-import { useState, useEffect } from "react";
 import { evalPostfix, infixToPostfix } from "../../shared/api/Calapi";
 import CalPart from "./CalPart";
 import HistoryPart from "./HistoryPart";
@@ -9,6 +10,8 @@ import images from "../../style/image";
 import Print from "../assets/Print";
 
 export default function Main() {
+  const navigate = useNavigate();
+
   const curEqu = equationStore((state) => state.cur);
   const popEqu = equationStore((state) => state.pop);
   const pushEqu = equationStore((state) => state.push);
@@ -116,7 +119,7 @@ export default function Main() {
         <div id='buttons' className='bg-stone-950 relative flex items-center border-b-2 border-gray-500 justify-between px-1'>
           <div className='flex'>
             <button onClick={() => setShowHistory(!showHistory)}> <img src={images.history} width={size} height={size}></img> </button>
-            <button> <img src={images.ruler} width={size} height={size}></img> </button>
+            <button onClick={() => navigate('/Calculator/measure') }> <img src={images.ruler} width={size} height={size}></img> </button>
             <button> <img src={images.more} width={size} height={size}></img> </button>
           </div>
           <button onClick={() => handleRemoveClicked()}> <img src={images.remove} width={size} height={size} className='brightness-200'></img> </button>

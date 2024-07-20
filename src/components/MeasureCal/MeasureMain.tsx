@@ -1,10 +1,12 @@
-import images from "../../style/image";
 import '../../index.css';
-import { Unit, Tip } from "../../shared/type/UnitType";
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import { Unit, Tip } from "../../shared/type/UnitType";
 import UnitComp from "./UnitComp";
+import images from "../../style/image";
 
 export default function MeasureMain() {
+  const navigate = useNavigate();
 
   const [selectIdx, setSelectedIdx] = useState(3);
 
@@ -13,7 +15,7 @@ export default function MeasureMain() {
       <div id="black-box" className="bg-black w-1/6" style={{ maxWidth: '400px', maxHeight: '430px', minWidth: '300px' }}>
 
         <div id="header" className="flex flex-row justify-start align-middle my-1 mb-3 mx-2">
-          <button className="pl-2 pr-4"><img src={images.LessThan} width={'15 px-2px'}/></button>
+          <button onClick={() => navigate('/Calculator')} className="pl-2 pr-4"><img src={images.LessThan} width={'15 px-2px'}/></button>
           <h1 className="text-white text-xl">단위 계산기</h1>
         </div>
 
