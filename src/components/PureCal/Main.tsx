@@ -120,7 +120,7 @@ export default function Main() {
             <div className='flex'>
               <button onClick={() => setShowHistory(!showHistory)}> <img src={images.history} width={size} height={size}></img> </button>
               <button onClick={() => navigate('/Calculator/measure')}> <img src={images.ruler} width={size} height={size}></img> </button>
-              <button> <img src={images.more} width={size} height={size}></img> </button>
+              <button onClick={() => alert("개발 예정일 수도?")}> <img src={images.more} width={size} height={size}></img> </button>
             </div>
             <button onClick={() => handleRemoveClicked()}> <img src={images.remove} width={size} height={size} className='brightness-200'></img> </button>
           </div>

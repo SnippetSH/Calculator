@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Unit, tip } from "../../shared/type/UnitType"
-import { measureStore } from "../../shared/stateStore/measurestore";
+import { measureStore, topBottomStore } from "../../shared/stateStore/measurestore";
 import UnitInside from "./UnitInside"
 
 export default function UnitComp({ renderIdx}: { renderIdx: number}) {
@@ -18,34 +18,40 @@ export default function UnitComp({ renderIdx}: { renderIdx: number}) {
         measureStore.getState().reset();
     }
 
+    const isTop = topBottomStore((state) => state.selectISTop);
     const measure = measureStore((state) => state.setResult);
     useEffect(() => {
-        const unsubscribe = measureStore.subscribe(
-            state => state.input,
-            () => {
-                console.log("꾸아앙아아")
-                let 하나 = contentFIdx, 둘 = contentSIdx;
-                const select = Unit[renderIdx].Content;
-                console.log(하나, 둘);
-                //console.log(select.length);
-                if(select.length <= contentFIdx || select.length <= contentSIdx) {
-                    하나 = 하나 % select.length;
-                    둘 = 둘 % select.length;
+        if(renderIdx < 8) {
+            const unsubscribe = measureStore.subscribe(
+                state => state.input,
+                () => {
+                    console.log("꾸아앙아아")
+                    let 하나 = contentFIdx, 둘 = contentSIdx;
+                    const select = Unit[renderIdx].Content;
+                    console.log(하나, 둘);
+                    //console.log(select.length);
+                    if(select.length <= contentFIdx || select.length <= contentSIdx) {
+                        하나 = 하나 % select.length;
+                        둘 = 둘 % select.length;
+                    }
+                    console.log(하나, 둘);
+                    if(isTop) {
+                        measure(renderIdx, select[하나].signName, select[둘].signName);
+                    } else {
+                        measure(renderIdx, select[둘].signName, select[하나].signName);
+                    }
                 }
-                console.log(하나, 둘);
-                measure(renderIdx, select[하나].signName, select[둘].signName);
-            }
-        );
-
-        return unsubscribe;
+            );
+            return unsubscribe;
+        }
     }, [renderIdx, contentFIdx, contentSIdx])
 
     if (renderIdx < 8) {
         return (
             <div className="w-full">
-                <UnitInside select={Unit[renderIdx]} contentIdx={contentFIdx} setIdx={setOneIdx} topdown={true}></UnitInside>
+                <UnitInside Top={true} select={Unit[renderIdx]} contentIdx={contentFIdx} setIdx={setOneIdx} topdown={isTop}></UnitInside>
                 <div className="border-b-2 border-b-gray-400 border-opacity-30 rounded-sm mx-2"></div>
-                <UnitInside select={Unit[renderIdx]} contentIdx={contentSIdx} setIdx={setOneIdx} topdown={false}></UnitInside>
+                <UnitInside Top={false} select={Unit[renderIdx]} contentIdx={contentSIdx} setIdx={setOneIdx} topdown={!isTop}></UnitInside>
                 <div className="border-b-2 border-b-gray-400 border-opacity-30 rounded-sm mx-2"></div>
             </div>
         )

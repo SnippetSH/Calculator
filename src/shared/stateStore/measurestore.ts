@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-import type { MeasureType } from "../type/measureType";
+import { ShowModal, TipStoreType, DivideStoreType, type MeasureType, type TopBottomType } from "../type/measureType";
 import { convert, convertTemperature, ConversionList } from "../../shared/api/convertapi";
 
 const measureStore = create(
@@ -42,5 +42,25 @@ const measureStore = create(
     }))
 );
 
+const topBottomStore = create<TopBottomType>((set) => ({
+    selectISTop: true,
+    setTop: (x: boolean) => set(() => ({selectISTop: x}))
+}));
 
-export { measureStore };
+const modalStore = create<ShowModal>((set) => ({
+    show: null,
+    setShow: (x: "팁" | "나누기") => set(() => ({show: x})),
+    setHide: () => set(() => ({show: null}))
+}));
+
+const TipStore = create<TipStoreType>((set) => ({
+    tip: 15,
+    setTip: (x: number) => set(() => ({tip: x}))
+}));
+
+const DivideStore = create<DivideStoreType>((set) => ({
+    divide: 15,
+    setDivide: (x: number) => set(() => ({divide: x}))
+}))
+
+export { measureStore, topBottomStore, modalStore, TipStore, DivideStore };

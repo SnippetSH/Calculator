@@ -5,7 +5,8 @@ import { Unit, tip } from "../../shared/type/UnitType";
 import UnitComp from "./UnitComp";
 import images from "../../style/image";
 import useHorizontalScroll from '../../shared/api/horizontalScroll';
-import { measureStore } from '../../shared/stateStore/measurestore';
+import { measureStore, modalStore, topBottomStore } from '../../shared/stateStore/measurestore';
+import SelectModal from '../assets/selectModal';
 
 export default function MeasureMain() {
   const navigate = useNavigate();
@@ -43,9 +44,19 @@ export default function MeasureMain() {
 
   const gap = 4;
 
-  const [isTop, setTop] = useState(true);
   const pushTop = measureStore((state) => state.inputPush);
   const popTop = measureStore((state) => state.inputPop);
+
+  const isTop = topBottomStore((state) => state.selectISTop);
+  const setTop = topBottomStore((state) => state.setTop);
+
+  const arrowClicked = (iamtop: boolean) => {
+    if(iamtop) {
+      setTop(true);
+    } else {
+      setTop(false);
+    }
+  }  
 
   const numClicked = (x: string) => {
     pushTop(x);
@@ -55,9 +66,10 @@ export default function MeasureMain() {
     popTop(1);
   }
 
+  const show = modalStore((state) => state.show);
   return (
     <div id="measure" className="flex items-center justify-center h-screen flex-col">
-      <div className='bg-stone-950 w-1/6 rounded-md' style={{ maxWidth: '405px', minWidth: '305px' }}>
+      <div className='bg-stone-950 w-1/6 rounded-md relative' style={{ maxWidth: '405px', minWidth: '305px' }}>
         <div id="black-box" className="bg-stone-950" style={{ maxWidth: '400px', maxHeight: '430px', minWidth: '300px' }}>
 
           <div id="header" className="flex flex-row justify-start align-middle my-1 mb-3 mx-2">
@@ -107,7 +119,7 @@ export default function MeasureMain() {
             {/** 3 숫자 */}
             <button onClick={() => numClicked("3")} style={{ height: `${buttonWidths}px`, maxWidth: "76px" }} className='font-bold flex justify-center items-center text-3xl bg-slate-800 text-white rounded-full'>3</button>
             {/** 윗 화살표 */}
-            <button onClick={() => setTop(true)} style={{ height: `${buttonWidths}px`, maxWidth: "76px" }} className='font-bold flex justify-center items-center text-3xl bg-neutral-500 rounded-full text-green-600'><img src={`${isTop ? images.UpDark : images.UpBright}`} width={'35px'} /></button>
+            <button onClick={() => arrowClicked(true) } style={{ height: `${buttonWidths}px`, maxWidth: "76px" }} className='font-bold flex justify-center items-center text-3xl bg-neutral-500 rounded-full text-green-600'><img src={`${isTop ? images.UpDark : images.UpBright}`} width={'35px'} /></button>
           </div>
           <div id='fifth-col' className={`grid grid-cols-4 gap-${gap} `}>
             {/** +/- 플마 */}
@@ -117,9 +129,15 @@ export default function MeasureMain() {
             {/** . 소숫점 */}
             <button onClick={() => numClicked(".")} style={{ height: `${buttonWidths}px`, maxWidth: "76px" }} className='font-bold flex justify-center items-center text-3xl bg-slate-800 text-white rounded-full'>.</button>
             {/** 아래 화살표 */}
-            <button onClick={() => setTop(false)} style={{ height: `${buttonWidths}px`, maxWidth: "76px" }} className='font-bold flex justify-center items-center text-3xl bg-neutral-500 text-white rounded-full'><img src={`${isTop ? images.DownBright : images.DownDark}`} width={'35px'} /></button>
+            <button onClick={() => arrowClicked(false) } style={{ height: `${buttonWidths}px`, maxWidth: "76px" }} className='font-bold flex justify-center items-center text-3xl bg-neutral-500 text-white rounded-full'><img src={`${isTop ? images.DownBright : images.DownDark}`} width={'35px'} /></button>
           </div>
         </div>
+
+        {show !== null ? <div className='w-full absolute bottom-0 opacity-95'>
+          <div className='mx-1'>
+            <SelectModal></SelectModal>
+          </div>
+        </div> : ''}
       </div>
     </div>
   )

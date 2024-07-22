@@ -18,6 +18,8 @@ import DownBright from './assets/DownArrow.png';
 import DownDark from './assets/DownDark.png';
 import UpBright from './assets/UpArrow.png';
 import UpDark from './assets/UpDark.png';
+import humans from './assets/humans.png';
+import tips from './assets/tips.png';
 
 const images = {
     Rbracket,
@@ -39,7 +41,9 @@ const images = {
     DownBright,
     DownDark,
     UpBright,
-    UpDark
+    UpDark,
+    humans,
+    tips
 }
 
 export default images;
