@@ -45,7 +45,7 @@ const loadAllData = (): HistoryStorage[] => {
 const loadOneData = (idx: number): HistoryStorage => {
     const tmpData = localStorage.getItem('history');
     const Data: HistoryStorage[] = JSON.parse(typeof tmpData === 'string' ? tmpData : "{}");
-    return Data[idx];
+    return Data[Data.length - idx - 1];
 }
 
 export { InitStorage, saveData, loadAllData, loadOneData };

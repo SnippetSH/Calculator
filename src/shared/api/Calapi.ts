@@ -57,7 +57,6 @@ const roundToPrecision = (value: number, precision: number): number => {
     return Math.round(value * factor) / factor;
 }
 
-
 const evalPostfix = (exp: StringArr): number => {
     let op1: number, op2: number, i: number = 0;
     let len: number = exp.length; 
@@ -95,4 +94,4 @@ const evalPostfix = (exp: StringArr): number => {
     return roundToPrecision(result, 14);
 }
 
-export { infixToPostfix, evalPostfix };
+export { infixToPostfix, evalPostfix, roundToPrecision };

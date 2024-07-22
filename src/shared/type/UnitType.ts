@@ -91,7 +91,7 @@ class 무게 implements UpDownCompType {
             {signName: "킬로그램", sign: "kg"},
             {signName: "그램", sign: "g"},
             {signName: "근", sign: "근"},
-            {signName: "돈", sign: "톤"},
+            {signName: "돈", sign: "돈"},
         ];
     }
 }

@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import './index.css';
+import './style/index.css';
 import { InitStorage } from './shared/api/localDBapi';
 import { useEffect } from 'react';
 import Main from './components/PureCal/Main';

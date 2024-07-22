@@ -13,6 +13,11 @@ import Rbracket from './assets/Rbracket.png';
 import Lbracket from './assets/Lbracket.png';
 import LessThan from './assets/LessThan.png';
 import DownTri from './assets/DownTri.png';
+import removeBright from './assets/removeBright.png';
+import DownBright from './assets/DownArrow.png';
+import DownDark from './assets/DownDark.png';
+import UpBright from './assets/UpArrow.png';
+import UpDark from './assets/UpDark.png';
 
 const images = {
     Rbracket,
@@ -29,7 +34,12 @@ const images = {
     divide,
     percent,
     LessThan,
-    DownTri
+    DownTri,
+    removeBright,
+    DownBright,
+    DownDark,
+    UpBright,
+    UpDark
 }
 
 export default images;

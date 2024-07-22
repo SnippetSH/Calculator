@@ -103,37 +103,37 @@ export default function Main() {
   return (
     <div className='flex items-center justify-center h-screen flex-col'>
       {/** 테스트 코드 */}
-
-      <div id='top' className='w-1/6' style={{ maxWidth: '400px', maxHeight: '430px', minWidth: '300px' }}>
-        <div id='equation-And-result' className='h-36 bg-stone-950 relative flex flex-col items-end justify-center overflow-hidden'>
-          <div id='equation' className='px-4 pt-8 h-1/2 overflow-y-hidden'>
-            <Print></Print>
+      <div className='bg-stone-950 w-1/6 rounded-md' style={{ maxWidth: '405px', minWidth: '305px' }}>
+        <div id='top' className='mt-2' style={{ maxWidth: '400px', maxHeight: '430px', minWidth: '300px' }}>
+          <div id='equation-And-result' className='h-36 bg-stone-950 relative flex flex-col items-end justify-center overflow-hidden'>
+            <div id='equation' className='px-4 pt-8 h-1/2 overflow-y-hidden'>
+              <Print></Print>
+            </div>
+            <div id='result' className='px-4 pt-4 h-1/2'>
+              <span className={`${showResult ? resultLen > 15 ? 'text-green-500 text-2xl' : 'text-green-500 text-3xl' : 'text-gray-500 text-lg'}`}>
+                {CanIShowResult()}
+              </span>
+            </div>
           </div>
-          <div id='result' className='px-4 pt-4 h-1/2'>
-            <span className={`${showResult ? resultLen > 15 ? 'text-green-500 text-2xl' : 'text-green-500 text-3xl' : 'text-gray-500 text-lg'}`}>
-              {CanIShowResult()}
-            </span>
+
+          <div id='buttons' className='bg-stone-950 relative flex items-center border-b-2 border-gray-500 justify-between px-1'>
+            <div className='flex'>
+              <button onClick={() => setShowHistory(!showHistory)}> <img src={images.history} width={size} height={size}></img> </button>
+              <button onClick={() => navigate('/Calculator/measure')}> <img src={images.ruler} width={size} height={size}></img> </button>
+              <button> <img src={images.more} width={size} height={size}></img> </button>
+            </div>
+            <button onClick={() => handleRemoveClicked()}> <img src={images.remove} width={size} height={size} className='brightness-200'></img> </button>
           </div>
         </div>
 
-        <div id='buttons' className='bg-stone-950 relative flex items-center border-b-2 border-gray-500 justify-between px-1'>
-          <div className='flex'>
-            <button onClick={() => setShowHistory(!showHistory)}> <img src={images.history} width={size} height={size}></img> </button>
-            <button onClick={() => navigate('/Calculator/measure') }> <img src={images.ruler} width={size} height={size}></img> </button>
-            <button> <img src={images.more} width={size} height={size}></img> </button>
-          </div>
-          <button onClick={() => handleRemoveClicked()}> <img src={images.remove} width={size} height={size} className='brightness-200'></img> </button>
+        <div id='down-cal' className='relative h-auto bg-stone-950' style={{ maxWidth: '400px', minWidth: '300px' }}>
+
+          {showHistory && <HistoryPart setShow={setShowHistory}></HistoryPart>}
+          <CalPart></CalPart>
+
         </div>
+        {/** 테스트 코드 */}
       </div>
-
-      <div id='down-cal' className='relative h-auto bg-stone-950 w-1/6' style={{ maxWidth: '400px', minWidth: '300px' }}>
-
-        {showHistory && <HistoryPart setShow={setShowHistory}></HistoryPart>}
-        <CalPart></CalPart>
-
-      </div>
-      {/** 테스트 코드 */}
-
     </div>
   )
 }
