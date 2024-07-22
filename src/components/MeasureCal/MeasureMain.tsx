@@ -79,7 +79,7 @@ export default function MeasureMain() {
           <UnitComp renderIdx={selectIdx}></UnitComp>
         </div>
         <div id="DownKeypad" className='bg-stone-950 py-2 grid grid-cols-1 gap-2 mx-1' style={{ maxWidth: '400px', minWidth: '300px' }}>
-          <div id='second-col' className={`grid grid-cols-4 gap-${gap} mx-2`}>
+          <div id='second-col' className={`grid grid-cols-4 gap-${gap}`}>
             {/** 7 숫자 */}
             <button onClick={() => numClicked("7")} ref={buttonRefs} style={{ height: `${buttonWidths}px`, maxWidth: "76px" }} className='font-bold flex justify-center items-center text-3xl bg-slate-800 text-white rounded-full'>7</button>
             {/** 8 숫자 */}
@@ -89,7 +89,7 @@ export default function MeasureMain() {
             {/** 지우기 */}
             <button onClick={() => removeClicked()} style={{ height: `${buttonWidths}px`, maxWidth: "76px" }} className='font-bold flex justify-center items-center text-3xl bg-neutral-500 rounded-full'><img src={`${images.removeBright}`} width={'25px'} /></button>
           </div>
-          <div id='third-col' className={`grid grid-cols-4 gap-${gap} mx-2`}>
+          <div id='third-col' className={`grid grid-cols-4 gap-${gap}`}>
             {/** 4 숫자 */}
             <button onClick={() => numClicked("4")} style={{ height: `${buttonWidths}px`, maxWidth: "76px" }} className='font-bold flex justify-center items-center text-3xl bg-slate-800 text-white rounded-full'>4</button>
             {/** 5 숫자 */}
@@ -99,7 +99,7 @@ export default function MeasureMain() {
             {/** C 초기화 */}
             <button onClick={() => measureStore.getState().reset()} style={{ height: `${buttonWidths}px`, maxWidth: "76px" }} className=' flex justify-center items-center text-3xl bg-neutral-500 rounded-full text-green-600'><h1 className='text-red-400'>C</h1></button>
           </div>
-          <div id='forth-col' className={`grid grid-cols-4 gap-${gap} mx-2`}>
+          <div id='forth-col' className={`grid grid-cols-4 gap-${gap} `}>
             {/** 1 숫자 */}
             <button onClick={() => numClicked("1")} style={{ height: `${buttonWidths}px`, maxWidth: "76px" }} className='font-bold flex justify-center items-center text-3xl bg-slate-800 text-white rounded-full'>1</button>
             {/** 2 숫자 */}
@@ -109,7 +109,7 @@ export default function MeasureMain() {
             {/** 윗 화살표 */}
             <button onClick={() => setTop(true)} style={{ height: `${buttonWidths}px`, maxWidth: "76px" }} className='font-bold flex justify-center items-center text-3xl bg-neutral-500 rounded-full text-green-600'><img src={`${isTop ? images.UpDark : images.UpBright}`} width={'35px'} /></button>
           </div>
-          <div id='fifth-col' className={`grid grid-cols-4 gap-${gap} mx-2`}>
+          <div id='fifth-col' className={`grid grid-cols-4 gap-${gap} `}>
             {/** +/- 플마 */}
             <button style={{ height: `${buttonWidths}px`, maxWidth: "76px" }} className='font-bold flex justify-center items-center text-2xl bg-slate-800 text-neutral-500 rounded-full'>+/-</button>
             {/** 0 숫자 */}
